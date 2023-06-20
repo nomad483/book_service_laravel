@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\BookController;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,19 +27,23 @@ use Illuminate\Support\Facades\Route;
 //    });
 //});
 
-
-
 Route::get('/', function () {
-    return response()->json([ 'status' => 'OK', 'timestamp' => Carbon::now()]);
+    return response()->json(['status' => 'OK', 'timestamp' => Carbon::now()]);
 });
 
-
+Route::controller(BookController::class)->group(function () {
+    Route::get('/books', 'index');
+    Route::get('/books/{id}', 'show');
+    Route::get('/author/{id}/books', 'showByAuthor');
+    Route::post('/books', 'store');
+    Route::put('/books/{id}', 'update');
+    Route::delete('/books/{id}', 'destroy');
+});
 
 Route::controller(AuthorController::class)->group(function () {
-    Route::get('authors', 'index');
-    Route::get('authors/{id}', 'show');
-    Route::post('authors', 'store');
-    Route::put('authors/{id}', 'update');
-    Route::delete('authors/{id}', 'destroy');
+    Route::get('/authors', 'index');
+    Route::get('/authors/{id}', 'show');
+    Route::post('/authors', 'store');
+    Route::put('/authors/{id}', 'update');
+    Route::delete('/authors/{id}', 'destroy');
 });
-

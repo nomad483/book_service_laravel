@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Customer;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CustomerSeeder extends Seeder
@@ -17,7 +16,7 @@ class CustomerSeeder extends Seeder
             'name' => 'John Doe',
             'email' => 'johndoe@example.com',
             'address' => '123 Main Street',
-            'user_id'=> 1,
+            'user_id' => 1,
         ]);
 
         Customer::query()->create([

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('title');
             $table->unsignedBigInteger('author_id');
             $table->foreign('author_id')->references('id')->on('authors');
+            $table->string('images')->nullable();
+            $table->string('small_image')->nullable();
             $table->date('publication_date');
             $table->decimal('price');
             $table->integer('quantity_available');

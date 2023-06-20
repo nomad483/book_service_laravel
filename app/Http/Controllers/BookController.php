@@ -2,65 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreBookRequest;
-use App\Http\Requests\UpdateBookRequest;
-use App\Models\Book;
+use App\DTO\BookDTO;
+use App\Http\Requests\BookRequest;
+use App\Http\Resources\BookResource;
+use App\Interfaces\BookControllerInterface;
+use App\Services\BookService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
-class BookController extends Controller
+class BookController extends Controller implements BookControllerInterface
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private BookService $bookService;
+
+    public function __construct(BookService $bookService)
     {
-        //
+        $this->bookService = $bookService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): AnonymousResourceCollection
     {
-        //
+        $books = $this->bookService->getAll();
+
+        return BookResource::collection($books);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBookRequest $request)
+    public function store(BookRequest $request): BookResource
     {
-        //
+        $book = $this->bookService->create(
+            new BookDTO(
+                title: $request->validated('title'),
+                small_image: $request->validated('small_image'),
+                author_id: $request->validated('author_id'),
+                images: $request->validated('images'),
+                publication_date: $request->validated('publication_date'),
+                price: $request->validated('price'),
+                quantity_available: $request->validated('quantity_available')
+            ),
+        );
+
+        return new BookResource($book);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Book $book)
+    public function show(int $id): BookResource
     {
-        //
+        $book = $this->bookService->getById($id);
+
+        return new BookResource($book);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Book $book)
+    public function showByAuthor(int $authorId): BookResource
     {
-        //
+        $book = $this->bookService->getByAuthor($authorId);
+
+        return new BookResource($book);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBookRequest $request, Book $book)
+    public function update(BookRequest $request, int $id): BookResource
     {
-        //
+        $book = $this->bookService->update(
+            $id,
+            new BookDTO(
+                title: $request->validated('title'),
+                small_image: $request->validated('small_image'),
+                author_id: $request->validated('author_id'),
+                images: $request->validated('images'),
+                publication_date: $request->validated('publication_date'),
+                price: $request->validated('price'),
+                quantity_available: $request->validated('quantity_available')
+            ),
+        );
+
+        return new BookResource($book);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Book $book)
+    public function destroy(int $id): Response
     {
-        //
+        $this->bookService->delete($id);
+
+        return response()->noContent();
     }
 }

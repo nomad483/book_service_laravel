@@ -21,15 +21,15 @@ class AuthorController extends Controller implements AuthorControllerInterface
 
     public function index(): AnonymousResourceCollection
     {
-        $authors = $this->authorService->getAllAuthors();
+        $authors = $this->authorService->getAll();
 
         return AuthorResource::collection($authors);
     }
 
     public function store(AuthorRequest $request): AuthorResource
     {
-        $author = $this->authorService->createAuthor(
-            new AuthorDTO(name: $request->validated('name'), bio: $request->validated('bio')),
+        $author = $this->authorService->create(
+            new AuthorDTO(name: $request->validated('name'), bio: $request->validated('bio'))
         );
 
         return new AuthorResource($author);
@@ -37,14 +37,14 @@ class AuthorController extends Controller implements AuthorControllerInterface
 
     public function show(int $id): AuthorResource
     {
-        $author = $this->authorService->getAuthorById($id);
+        $author = $this->authorService->getById($id);
 
         return new AuthorResource($author);
     }
 
     public function update(AuthorRequest $request, int $id): AuthorResource
     {
-        $author = $this->authorService->updateAuthor($id, new AuthorDTO(
+        $author = $this->authorService->update($id, new AuthorDTO(
             name: $request->validated('name'),
             bio: $request->validated('bio')
         ));
@@ -54,7 +54,7 @@ class AuthorController extends Controller implements AuthorControllerInterface
 
     public function destroy(int $id): Response
     {
-        $this->authorService->deleteAuthor($id);
+        $this->authorService->delete($id);
 
         return response()->noContent();
     }

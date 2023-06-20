@@ -18,5 +18,5 @@ use Illuminate\Support\Facades\Route;
 //    return view('welcome');
 //});
 Route::get('/', function () {
-    return response()->json([ 'status' => 'OK', 'timestamp' => Carbon::now()]);
+    return response()->json(['status' => 'OK', 'timestamp' => Carbon::now()]);
 });

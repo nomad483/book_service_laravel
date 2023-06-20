@@ -9,6 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
+    protected $fillable = [
+        'title',
+        'images',
+        'small_image',
+        'publication_date',
+        'author_id',
+        'price',
+        'quantity_available',
+    ];
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(Author::class, 'author_id');
