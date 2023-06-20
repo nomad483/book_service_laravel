@@ -36,6 +36,6 @@ class AuthorService implements AuthorServiceInterface
 
     public function delete(int $id): bool|null
     {
-        Author::query()->findOrFail($id)->delete();
+        return Author::query()->findOrFail($id)->delete();
     }
 }
