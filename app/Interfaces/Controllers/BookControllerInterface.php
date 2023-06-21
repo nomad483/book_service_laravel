@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Interfaces;
+namespace App\Interfaces\Controllers;
 
 use App\Http\Requests\BookRequest;
 use App\Http\Resources\BookResource;
@@ -15,7 +15,7 @@ interface BookControllerInterface
 
     public function show(int $id): BookResource;
 
-    public function showByAuthor(int $authorId): BookResource;
+    public function showByAuthor(int $authorId): AnonymousResourceCollection;
 
     public function update(BookRequest $request, int $id): BookResource;
 

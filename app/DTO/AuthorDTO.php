@@ -2,11 +2,11 @@
 
 namespace App\DTO;
 
-readonly class AuthorDTO
+class AuthorDTO extends BaseDTO
 {
     public function __construct(
-        public string $name,
-        public string $bio
+        readonly public string $name,
+        readonly public string $bio
     ) {
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\DTO\AuthorDTO;
-use App\Interfaces\AuthorServiceInterface;
+use App\Interfaces\Services\AuthorServiceInterface;
 use App\Models\Author;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,7 +21,7 @@ class AuthorService implements AuthorServiceInterface
         return Author::query()->findOrFail($id);
     }
 
-    public function create(AuthorDTO $dto): Model|Builder
+    public function create(AuthorDTO $dto)
     {
         return Author::query()->create((array) $dto);
     }

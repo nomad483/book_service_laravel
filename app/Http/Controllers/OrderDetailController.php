@@ -2,65 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOrderDetailRequest;
-use App\Http\Requests\UpdateOrderDetailRequest;
-use App\Models\OrderDetail;
+use App\DTO\OrderDetailsDTO;
+use App\Http\Requests\OrderDetailsRequest;
+use App\Http\Resources\OrderDetailsResource;
+use App\Interfaces\Controllers\OrderDetailsControllerInterface;
+use App\Services\OrderDetailsService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
-class OrderDetailController extends Controller
+class OrderDetailController extends Controller implements OrderDetailsControllerInterface
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private OrderDetailsService $orderDetailsService;
+
+    public function __construct(OrderDetailsService $orderDetailsService)
     {
-        //
+        $this->orderDetailsService = $orderDetailsService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): AnonymousResourceCollection
     {
-        //
+        $orderDetails = $this->orderDetailsService->getAll();
+
+        return OrderDetailsResource::collection($orderDetails);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreOrderDetailRequest $request)
+    public function store(OrderDetailsRequest $request): OrderDetailsResource
     {
-        //
+        $orderDetail = $this->orderDetailsService->create(
+            new OrderDetailsDTO(
+                order_id: $request->validated('order_id'),
+                book_id: $request->validated('book_id'),
+                quantity: $request->validated('quantity'),
+                price_per_unit: $request->validated('price_per_unit')
+            )
+        );
+
+        return new OrderDetailsResource($orderDetail);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(OrderDetail $orderDetail)
+    public function show(int $id): OrderDetailsResource
     {
-        //
+        $orderDetail = $this->orderDetailsService->getById($id);
+
+        return new OrderDetailsResource($orderDetail);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(OrderDetail $orderDetail)
+    public function showByOrder(int $orderId): AnonymousResourceCollection
     {
-        //
+        $orderDetails = $this->orderDetailsService->getByOrderId($orderId);
+
+        return OrderDetailsResource::collection($orderDetails);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateOrderDetailRequest $request, OrderDetail $orderDetail)
+    public function showByBook(int $bookId): AnonymousResourceCollection
     {
-        //
+        $orderDetails = $this->orderDetailsService->getByBookId($bookId);
+
+        return OrderDetailsResource::collection($orderDetails);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(OrderDetail $orderDetail)
+    public function update(OrderDetailsRequest $request, int $id): OrderDetailsResource
     {
-        //
+        $orderDetail = $this->orderDetailsService->update($id,
+            new OrderDetailsDTO(
+                order_id: $request->validated('order_id'),
+                book_id: $request->validated('book_id'),
+                quantity: $request->validated('quantity'),
+                price_per_unit: $request->validated('price_per_unit')
+            )
+        );
+
+        return new OrderDetailsResource($orderDetail);
+    }
+
+    public function destroy(int $id): Response
+    {
+        $this->orderDetailsService->delete($id);
+
+        return response()->noContent();
     }
 }

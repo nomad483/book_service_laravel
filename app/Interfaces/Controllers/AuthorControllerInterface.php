@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Interfaces;
+namespace App\Interfaces\Controllers;
 
 use App\Http\Requests\AuthorRequest;
 use App\Http\Resources\AuthorResource;

@@ -2,65 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
-use App\Models\Category;
+use App\DTO\CategoryDTO;
+use App\Http\Requests\CategoryRequest;
+use App\Http\Resources\CategoryResource;
+use App\Interfaces\Controllers\CategoryControllerInterface;
+use App\Services\CategoryService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
-class CategoryController extends Controller
+class CategoryController extends Controller implements CategoryControllerInterface
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private CategoryService $categoryService;
+
+    public function __construct(CategoryService $categoryService)
     {
-        //
+        $this->categoryService = $categoryService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): AnonymousResourceCollection
     {
-        //
+        $categories = $this->categoryService->getAll();
+
+        return CategoryResource::collection($categories);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCategoryRequest $request)
+    public function store(CategoryRequest $request): CategoryResource
     {
-        //
+        $category = $this->categoryService->create(new CategoryDTO(category_name: $request->validated('category_name')));
+
+        return new CategoryResource($category);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Category $category)
+    public function show(int $id): CategoryResource
     {
-        //
+        $category = $this->categoryService->getById($id);
+
+        return new CategoryResource($category);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
+    public function update(CategoryRequest $request, int $id): CategoryResource
     {
-        //
+        $category = $this->categoryService->update($id, new CategoryDTO(category_name: $request->validated('category_name')));
+
+        return new CategoryResource($category);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function destroy(int $id): Response
     {
-        //
-    }
+        $this->categoryService->delete($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Category $category)
-    {
-        //
+        return response()->noContent();
     }
 }

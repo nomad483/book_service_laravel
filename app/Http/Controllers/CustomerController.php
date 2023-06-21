@@ -2,65 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCustomerRequest;
-use App\Http\Requests\UpdateCustomerRequest;
-use App\Models\Customer;
+use App\DTO\CustomerDTO;
+use App\Http\Requests\CustomerRequest;
+use App\Http\Resources\CustomerResource;
+use App\Interfaces\Controllers\CustomerControllerInterface;
+use App\Services\CustomerService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
-class CustomerController extends Controller
+class CustomerController extends Controller implements CustomerControllerInterface
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private CustomerService $customerService;
+
+    public function __construct(CustomerService $customerService)
     {
-        //
+        $this->customerService = $customerService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): AnonymousResourceCollection
     {
-        //
+        $customers = $this->customerService->getAll();
+
+        return CustomerResource::collection($customers);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCustomerRequest $request)
+    public function store(CustomerRequest $request): CustomerResource
     {
-        //
+        $customer = $this->customerService->create(
+            new CustomerDTO(
+                name: $request->validated('name'),
+                email: $request->validated('email'),
+                address: $request->validated('address'),
+                user_id: $request->validated('user_id')
+            )
+        );
+
+        return new CustomerResource($customer);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Customer $customer)
+    public function show(int $id): CustomerResource
     {
-        //
+        $customer = $this->customerService->getById($id);
+
+        return new CustomerResource($customer);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Customer $customer)
+    public function showByUser(int $userId): AnonymousResourceCollection
     {
-        //
+        $customers = $this->customerService->getByUserId($userId);
+
+        return CustomerResource::collection($customers);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
+    public function update(CustomerRequest $request, int $id): CustomerResource
     {
-        //
+        $customer = $this->customerService->update($id,
+            new CustomerDTO(
+                name: $request->validated('name'),
+                email: $request->validated('email'),
+                address: $request->validated('address'),
+                user_id: $request->validated('user_id')
+            )
+        );
+
+        return new CustomerResource($customer);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Customer $customer)
+    public function destroy(int $id): Response
     {
-        //
+        $this->customerService->delete($id);
+
+        return response()->noContent();
     }
 }

@@ -2,65 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
-use App\Models\Order;
+use App\DTO\OrderDTO;
+use App\Http\Requests\OrderRequest;
+use App\Http\Resources\OrderResource;
+use App\Interfaces\Controllers\OrderControllerInterface;
+use App\Services\OrderService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
-class OrderController extends Controller
+class OrderController extends Controller implements OrderControllerInterface
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private OrderService $orderService;
+
+    public function __construct(OrderService $orderService)
     {
-        //
+        $this->orderService = $orderService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): AnonymousResourceCollection
     {
-        //
+        $orders = $this->orderService->getAll();
+
+        return OrderResource::collection($orders);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreOrderRequest $request)
+    public function store(OrderRequest $request): OrderResource
     {
-        //
+        $order = $this->orderService->create(
+            new OrderDTO(
+                customer_id: $request->validated('customer_id'),
+                date: $request->validated('date'),
+                total_amount: $request->validated('total_amount')
+            )
+        );
+
+        return new OrderResource($order);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Order $order)
+    public function show(int $id): OrderResource
     {
-        //
+        $order = $this->orderService->getById($id);
+
+        return new OrderResource($order);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
+    public function showByCustomer(int $customerId): AnonymousResourceCollection
     {
-        //
+        $orders = $this->orderService->getByCustomerId($customerId);
+
+        return OrderResource::collection($orders);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateOrderRequest $request, Order $order)
+    public function update(OrderRequest $request, int $id): OrderResource
     {
-        //
+        $order = $this->orderService->update($id,
+            new OrderDTO(
+                customer_id: $request->validated('customer_id'),
+                date: $request->validated('date'),
+                total_amount: $request->validated('total_amount')
+            )
+        );
+
+        return new OrderResource($order);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
+    public function destroy(int $id): Response
     {
-        //
+        $this->orderService->delete($id);
+
+        return response()->noContent();
     }
 }

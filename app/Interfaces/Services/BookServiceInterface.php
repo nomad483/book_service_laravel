@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Interfaces;
+namespace App\Interfaces\Services;
 
 use App\DTO\BookDTO;
 use Illuminate\Database\Eloquent\Builder;

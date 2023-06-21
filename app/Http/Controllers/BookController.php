@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\DTO\BookDTO;
 use App\Http\Requests\BookRequest;
 use App\Http\Resources\BookResource;
-use App\Interfaces\BookControllerInterface;
+use App\Interfaces\Controllers\BookControllerInterface;
 use App\Services\BookService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -31,9 +31,9 @@ class BookController extends Controller implements BookControllerInterface
         $book = $this->bookService->create(
             new BookDTO(
                 title: $request->validated('title'),
-                small_image: $request->validated('small_image'),
                 author_id: $request->validated('author_id'),
                 images: $request->validated('images'),
+                small_image: $request->validated('small_image'),
                 publication_date: $request->validated('publication_date'),
                 price: $request->validated('price'),
                 quantity_available: $request->validated('quantity_available')
@@ -50,11 +50,11 @@ class BookController extends Controller implements BookControllerInterface
         return new BookResource($book);
     }
 
-    public function showByAuthor(int $authorId): BookResource
+    public function showByAuthor(int $authorId): AnonymousResourceCollection
     {
-        $book = $this->bookService->getByAuthor($authorId);
+        $books = $this->bookService->getByAuthor($authorId);
 
-        return new BookResource($book);
+        return BookResource::collection($books);
     }
 
     public function update(BookRequest $request, int $id): BookResource
@@ -63,9 +63,9 @@ class BookController extends Controller implements BookControllerInterface
             $id,
             new BookDTO(
                 title: $request->validated('title'),
-                small_image: $request->validated('small_image'),
                 author_id: $request->validated('author_id'),
                 images: $request->validated('images'),
+                small_image: $request->validated('small_image'),
                 publication_date: $request->validated('publication_date'),
                 price: $request->validated('price'),
                 quantity_available: $request->validated('quantity_available')

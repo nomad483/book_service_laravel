@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\DTO\AuthorDTO;
 use App\Http\Requests\AuthorRequest;
 use App\Http\Resources\AuthorResource;
-use App\Interfaces\AuthorControllerInterface;
+use App\Interfaces\Controllers\AuthorControllerInterface;
 use App\Services\AuthorService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use OpenApi\Attributes as OA;
 
 class AuthorController extends Controller implements AuthorControllerInterface
 {
@@ -19,6 +20,8 @@ class AuthorController extends Controller implements AuthorControllerInterface
         $this->authorService = $authorService;
     }
 
+    #[OA\Response(response: 200, description: 'Return all authors')]
+    #[OA\Get(path: '/api/authors')]
     public function index(): AnonymousResourceCollection
     {
         $authors = $this->authorService->getAll();

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\DTO\BookDTO;
-use App\Interfaces\BookServiceInterface;
+use App\Interfaces\Services\BookServiceInterface;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

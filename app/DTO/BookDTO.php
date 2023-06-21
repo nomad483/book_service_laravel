@@ -2,16 +2,16 @@
 
 namespace App\DTO;
 
-readonly class BookDTO
+class BookDTO extends BaseDto
 {
     public function __construct(
-        public string $title,
-        public int $author_id,
-        public string|null $images,
-        public string|null $small_image,
-        public string $publication_date,
-        public float $price,
-        public int $quantity_available
+        readonly public string $title,
+        readonly public int $author_id,
+        readonly public string|null $images,
+        readonly public string|null $small_image,
+        readonly public string $publication_date,
+        readonly public float $price,
+        readonly public int $quantity_available
     ) {
     }
 }

@@ -6,3 +6,6 @@ serve:
 
 pint:
 	./vendor/bin/pint
+
+doc.generate:
+	php artisan l5-swagger:generate

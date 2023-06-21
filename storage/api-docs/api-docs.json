@@ -1,0 +1,29 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "My First API",
+        "version": "0.1"
+    },
+    "paths": {
+        "/api/authors": {
+            "get": {
+                "operationId": "0c71439e213e1b284fc37995d74bca2b",
+                "responses": {
+                    "200": {
+                        "description": "Return all authors"
+                    },
+                    "400": {
+                        "description": "Validation failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "schema": "s: s"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
