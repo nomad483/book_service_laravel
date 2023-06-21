@@ -53,4 +53,3 @@ $response = $kernel->handle(
 )->send();
 
 $kernel->terminate($request, $response);
-//TODO: rewrite README.md
